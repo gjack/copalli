@@ -7,4 +7,6 @@ class User < ApplicationRecord
   belongs_to :organization
   validates :first_name, :last_name, :email, presence: true
   validates_confirmation_of :password
+
+  has_many :teams, through: :team_members
 end
