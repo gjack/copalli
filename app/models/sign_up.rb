@@ -1,18 +1,24 @@
 class SignUp
   include ActiveModel::Model
-
   attr_reader :user, :organization
   attr_accessor :organization_name, :time_zone, :first_name, :last_name, :email, :password, :password_confirmation
-
   validates :organization_name, :first_name, :last_name, :email, :password, :password_confirmation, presence: true
+
+  def self.authentication_keys
+    [:email, :first_name, :last_name, :password, :password_confirmation, :organization_name, :time_zone]
+  end
 
   def save
     #Validate sign_up object
     return false unless valid?
-    delegate_attributes_for_organization
-    delegate_attributes_for_user
-    persist!
-    errors.any? ? false : true
+    ActiveRecord::Base.transaction do
+      delegate_attributes_for_organization
+      delegate_attributes_for_user
+      persist!
+    end
+    true
+  rescue ActiveRecord::RecordInvalid => e
+    false
   end
 
   private
@@ -44,25 +50,18 @@ class SignUp
     @user.valid?
     errors.add(:email, @user.errors[:email].first) if @user.errors[:email].present?
     errors.add(:password, @user.errors[:password].first) if @user.errors[:password].present?
+    errors.add(:password_confirmation, @user.errors[:password_confirmation].first) if @user.errors[:password_confirmation].present?
   end
 
   def persist!
-    persist_organization!
-    persist_user!
-  end
-
-  def persist_organization!
     delegate_errors_for_organization
-    if !errors.any?
-      @organization.save!
-      @user.organization = @organization
-    end
+    @organization.save!
+    @user.organization = @organization
+    persist_user!
   end
 
   def persist_user!
     delegate_errors_for_user
-    if !errors.any?
-      @user.save!
-    end
+    @user.save!
   end
 end

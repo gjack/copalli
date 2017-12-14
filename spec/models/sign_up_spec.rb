@@ -24,12 +24,13 @@ RSpec.describe SignUp, type: :model do
         create(:organization, name: "My organization")
       end
 
-      it "does not create a new organization" do
+      it "does not create a new organization when organization fails validations" do
         expect { SignUp.new(sign_up_params).save }.to_not change { Organization.count }
       end
 
-      it "does not create a new user" do
-        expect { SignUp.new(sign_up_params).save }.to_not change { User.count }
+      it "does not create a new organization when user fails validations" do
+        params = sign_up_params.merge(organization_name: "New Organization", password: "piramid45", password_confirmation: "piramid56")
+        expect { SignUp.new(params).save }.to_not change { Organization.count }
       end
 
       it "delegates errors" do

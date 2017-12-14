@@ -5,5 +5,6 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   belongs_to :organization
-  validates :first_name, :last_name, presence: true
+  validates :first_name, :last_name, :email, presence: true
+  validates_confirmation_of :password
 end
