@@ -4,5 +4,9 @@ class Team < ApplicationRecord
   validates :name, presence: true
   validates :name, uniqueness: { scope: :organization_id }
 
-  has_many :members, through: :team_members, source: :users
+  has_many :team_members
+
+  def manager
+    team_members.where(role: "manager").first
+  end
 end
