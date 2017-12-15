@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171214194207) do
+ActiveRecord::Schema.define(version: 20171215174327) do
+
+  create_table "meeting_schedules", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.datetime "start_time"
+    t.text "recurring"
+    t.bigint "team_member_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_member_id"], name: "index_meeting_schedules_on_team_member_id"
+  end
 
   create_table "organizations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
@@ -63,6 +72,7 @@ ActiveRecord::Schema.define(version: 20171214194207) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "meeting_schedules", "team_members"
   add_foreign_key "team_members", "organizations"
   add_foreign_key "team_members", "teams"
   add_foreign_key "team_members", "users"
