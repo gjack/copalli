@@ -9,4 +9,8 @@ class User < ApplicationRecord
   validates_confirmation_of :password
 
   has_many :teams, through: :team_members
+
+  def name
+    "#{first_name} #{last_name}"
+  end
 end

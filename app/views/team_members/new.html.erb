@@ -1,0 +1,14 @@
+<div class="container">
+  <h2>Add a new member to team <%= @team.name %></h2>
+  <%= form_for @team_member, as: :team_member, url: team_team_members_path(@team) do |f| %>
+    <%= f.hidden_field :team_id, value: @team.id %>
+    <div id="new_team_member_form"></div>
+    <div
+      id="new-team-member-data"
+      data-available-people=<%= @available_people.to_json %>
+      data-team-id=<%= @team.id %>
+    />
+    <%= javascript_pack_tag 'team_members/new_team_member' %>
+    <%= f.submit class: "btn btn-primary float-right" %>
+  <% end %>
+</div>
