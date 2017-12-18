@@ -57,15 +57,29 @@ class NewTeamMember extends Component {
 
     if (matches.length > 0) {
       return (
-        <div className="dropdown-menu position-absolute show" style={{transform: "translate3d(0px, 68px, 0px)", top: 0, left: 0, willChange: "transform", width: "100%" }}>
+        <div
+          className="dropdown-menu position-absolute show"
+          style={{transform: "translate3d(0px, 68px, 0px)", top: 0, left: 0, willChange: "transform", width: "100%" }}
+        >
           {matches.map(match => {
-            return <div className="dropdown-item" onClick={this.updateSelectedUser.bind(null, match)}>{`${match.first_name} ${match.last_name}`}</div>
+            return (
+              <div
+                key={match.id}
+                className="dropdown-item"
+                onClick={this.updateSelectedUser.bind(null, match)}
+              >
+                {`${match.first_name} ${match.last_name}`}
+              </div>
+            )
           })}
         </div>
       )
     } else if (this.state.searchTerm.length > 0) {
       return (
-      <div className="dropdown-menu position-absolute show" style={{transform: "translate3d(0px, 68px, 0px)", top: 0, left: 0, willChange: "transform", width: "100%" }}>
+      <div
+        className="dropdown-menu position-absolute show"
+        style={{transform: "translate3d(0px, 68px, 0px)", top: 0, left: 0, willChange: "transform", width: "100%" }}
+      >
         <div className="dropdown-item">No user matches your search</div>
       </div>
       )
@@ -77,22 +91,53 @@ class NewTeamMember extends Component {
     <div>
       <div className="form-group position-relative">
         <label htmlFor="existingUserSearch">Search for an existing user or add a new one:</label>
-        <input type="search" className="form-control" id="existingUserSearch" onChange={this.updateSearchTerm} value={this.state.searchTerm}/>
+        <input
+          type="search"
+          className="form-control"
+          id="existingUserSearch"
+          onChange={this.updateSearchTerm}
+          value={this.state.searchTerm}
+        />
         {this.renderMatchingPeople()}
       </div>
       <div>
         <input type="hidden" name="team_member[user_id]" value={this.state.selectedUserId} />
         <div className="form-group">
           <label htmlFor="userFirstName">First Name:</label>
-          <input type="text" className="form-control" id="userFirstName" name="team_member[first_name]" placeholder="John" value={this.state.firstName} onChange={this.handleUserValueChange.bind(null, "firstName")}/>
+          <input
+            type="text"
+            className="form-control"
+            id="userFirstName"
+            name="team_member[first_name]"
+            placeholder="John"
+            value={this.state.firstName}
+            onChange={this.handleUserValueChange.bind(null, "firstName")}
+          />
         </div>
         <div className="form-group">
           <label htmlFor="userLastName">Last Name:</label>
-          <input type="text" className="form-control" id="userLastName" name="team_member[last_name]" placeholder="Sample" value={this.state.lastName} onChange={this.handleUserValueChange.bind(null, "lastName")}/>
+          <input
+            type="text"
+            className="form-control"
+            id="userLastName"
+            name="team_member[last_name]"
+            placeholder="Sample"
+            value={this.state.lastName}
+            onChange={this.handleUserValueChange.bind(null, "lastName")}
+          />
         </div>
         <div className="form-group">
           <label htmlFor="userEmail">Email:</label>
-          <input type="email" className="form-control" id="userEmail" name="team_member[email]" placeholder="johnsample@example.com" value={this.state.email} onChange={this.handleUserValueChange.bind(null, "email")} required/>
+          <input
+            type="email"
+            className="form-control"
+            id="userEmail"
+            name="team_member[email]"
+            placeholder="johnsample@example.com"
+            value={this.state.email}
+            onChange={this.handleUserValueChange.bind(null, "email")}
+            required
+          />
           <div className="invalid-feedback">
             Please provide a valid email address.
           </div>
@@ -100,7 +145,14 @@ class NewTeamMember extends Component {
         <div className="form-check form-check-inline">
           <label className="form-check-label">
             <input type="hidden" name="team_member[role]" value="employee" />
-            <input className="form-check-input" type="checkbox" id="inlineCheckbox1" name="team_member[role]" value="manager" /> Make manager
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="inlineCheckbox1"
+              name="team_member[role]"
+              value="manager"
+            />
+              Make manager
           </label>
         </div>
       </div>
