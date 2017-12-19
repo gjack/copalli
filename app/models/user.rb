@@ -8,6 +8,7 @@ class User < ApplicationRecord
   validates :first_name, :last_name, :email, presence: true
 
   has_many :teams, through: :team_members
+  has_many :meetings, through: :team_members
 
   def name
     "#{first_name} #{last_name}"

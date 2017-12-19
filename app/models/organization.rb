@@ -3,6 +3,7 @@ class Organization < ApplicationRecord
   has_many :administrators, -> { where(account_administrator: true) }, class_name: "User"
   has_many :teams, dependent: :destroy
   has_many :team_members, through: :teams
+  has_many :meetings
 
   validates :name, presence: true, uniqueness: true
 end

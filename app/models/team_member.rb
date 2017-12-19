@@ -5,6 +5,7 @@ class TeamMember < ApplicationRecord
   belongs_to :team
   belongs_to :organization
   has_many :meeting_schedules
+  has_many :meetings
 
   attribute :email, :string
   attribute :first_name, :string
