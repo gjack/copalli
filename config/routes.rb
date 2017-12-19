@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   resources :teams do
     resources :team_members, only: [:new, :create, :show]
   end
+
+  post "/team_members/:team_member_id/meeting_schedules", to: "meeting_schedules#create"
 end

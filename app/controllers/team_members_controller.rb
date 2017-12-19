@@ -1,6 +1,6 @@
 class TeamMembersController < ApplicationController
   before_action :authenticate_user!
-  
+
   def new
     @organization = current_user.organization
     @team = @organization.teams.find_by(id: params[:team_id])
@@ -17,6 +17,12 @@ class TeamMembersController < ApplicationController
     else
       render :new
     end
+  end
+
+  def show
+    @organization = current_user.organization
+    @team = @organization.teams.find_by(id: params[:team_id])
+    @team_member = @team.team_members.find_by(id: params[:id])
   end
 
   private

@@ -1,0 +1,12 @@
+<div class="container">
+  <% if !@team_member.meeting_schedules.any? %>
+    <h3>Scheduling</h3>
+    <div id="new_meeting_schedule_form"></div>
+    <div
+      id="team-member-data"
+      data-team-member-id=<%= @team_member.id %>
+      data-team-member-user=<%= @team_member.user.to_json %>
+    />
+    <%= javascript_pack_tag 'meeting_schedules/meeting_schedule_form' %>
+  <% end %>
+</div>
