@@ -8,8 +8,7 @@ class TeamsController < ApplicationController
 
   def show
     @organization = current_user.organization
-    team = @organization.teams.find_by(id: params[:id])
-    @team = Teams::TeamSerializer.new(team)
+    @team = @organization.teams.find_by(id: params[:id])
   end
 
   def new

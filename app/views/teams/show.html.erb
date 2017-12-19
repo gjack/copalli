@@ -19,7 +19,7 @@
       <% if @team.team_members.any? %>
         <div class="list-group">
           <% @team.team_members.each do |member| %>
-            <a href=<%= member.path %> class="list-group-item list-group-item-action"><%= member.name %></a>
+            <a href=<%= team_team_member_path(@team, member) %> class="list-group-item list-group-item-action"><%= member.name %></a>
           <% end %>
         </div>
       <% else %>
