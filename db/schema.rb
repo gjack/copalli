@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171218231626) do
+ActiveRecord::Schema.define(version: 20171219220756) do
 
   create_table "meeting_schedules", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "start_time"
@@ -19,6 +19,18 @@ ActiveRecord::Schema.define(version: 20171218231626) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["team_member_id"], name: "index_meeting_schedules_on_team_member_id"
+  end
+
+  create_table "meetings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.datetime "date"
+    t.bigint "meeting_schedule_id"
+    t.bigint "team_member_id"
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["meeting_schedule_id"], name: "index_meetings_on_meeting_schedule_id"
+    t.index ["organization_id"], name: "index_meetings_on_organization_id"
+    t.index ["team_member_id"], name: "index_meetings_on_team_member_id"
   end
 
   create_table "organizations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -85,6 +97,9 @@ ActiveRecord::Schema.define(version: 20171218231626) do
   end
 
   add_foreign_key "meeting_schedules", "team_members"
+  add_foreign_key "meetings", "meeting_schedules"
+  add_foreign_key "meetings", "organizations"
+  add_foreign_key "meetings", "team_members"
   add_foreign_key "team_members", "organizations"
   add_foreign_key "team_members", "teams"
   add_foreign_key "team_members", "users"
