@@ -1,5 +1,6 @@
 class TeamMembersController < ApplicationController
   before_action :authenticate_user!
+  
   def new
     @organization = current_user.organization
     @team = @organization.teams.find_by(id: params[:team_id])

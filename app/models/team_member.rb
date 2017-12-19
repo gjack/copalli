@@ -1,4 +1,6 @@
 class TeamMember < ApplicationRecord
+  include UserInfo
+
   belongs_to :user
   belongs_to :team
   belongs_to :organization
@@ -17,7 +19,9 @@ class TeamMember < ApplicationRecord
     self.user = if existing_user.present?
       existing_user
     else
-      User.invite!(email: email, first_name: first_name, last_name: last_name)
+      User.invite!({email: email, first_name: first_name, last_name: last_name}, current_user) do |u|
+        u.skip_invitation = true
+      end
     end
   end
 end
