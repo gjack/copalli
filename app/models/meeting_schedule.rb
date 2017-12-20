@@ -3,10 +3,6 @@ class MeetingSchedule < ApplicationRecord
 
   belongs_to :team_member
   has_many :meetings, dependent: :destroy
-  attribute :every, :integer
-  attribute :frequency, :string
-  attribute :day_of_week, :string
-
   before_create :set_recurrence_schedule
   after_create :set_first_meetings
 

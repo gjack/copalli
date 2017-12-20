@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219220756) do
+ActiveRecord::Schema.define(version: 20171220141150) do
 
   create_table "meeting_schedules", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "start_time"
@@ -18,6 +18,9 @@ ActiveRecord::Schema.define(version: 20171219220756) do
     t.bigint "team_member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "every"
+    t.string "frequency"
+    t.string "day_of_week"
     t.index ["team_member_id"], name: "index_meeting_schedules_on_team_member_id"
   end
 
