@@ -69,7 +69,7 @@ class MeetingScheduleForm extends Component {
       type: "POST",
       data: data,
       success: (data) => {
-        console.log(data)
+        window.location.reload()
       },
       error: (error) => {
         console.log(error)

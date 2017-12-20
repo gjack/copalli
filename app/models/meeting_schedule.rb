@@ -6,6 +6,16 @@ class MeetingSchedule < ApplicationRecord
   before_create :set_recurrence_schedule
   after_create :set_first_meetings
 
+  def upcoming_meeting
+    meeting_date = schedule.next_occurrence(Time.now.beginning_of_day - 1.day)
+    meetings.find_by(date: meeting_date)
+  end
+
+  def next_meeting
+    meeting_date = schedule.next_occurrence
+    meetings.find_by(date: meeting_date)
+  end
+
   private
 
   def set_recurrence_schedule

@@ -16,7 +16,9 @@ class MeetingSchedulesController < ApplicationController
 
   def meeting_schedule_params
     schedule_params = params.require(:meeting_schedule).permit(:start_time, :every, :frequency, :day_of_week)
-    schedule_params[:start_time] = Time.parse(schedule_params[:start_time]).in_time_zone(@organization.time_zone)
+    schedule_params[:start_time] = Time.parse(schedule_params[:start_time])
+      .beginning_of_day
+      .in_time_zone(@organization.time_zone)
     schedule_params
   end
 end

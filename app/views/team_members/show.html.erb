@@ -1,5 +1,15 @@
 <div class="container">
-  <% if !@team_member.meeting_schedules.any? %>
+  <% if @team_member.meeting_schedule.present? %>
+    <div class="card">
+      <div class="card-body">
+        <span><%= @team_member.name %></span>
+        <div>
+          <span>Upcoming one-on-one: <%= @team_member.upcoming_meeting.date_string %></span>
+          <span>Next one-on-one: <%= @team_member.next_meeting.date_string %></span>
+        </div>
+      </div>
+    </div>
+  <% else %>
     <h3>Scheduling</h3>
     <div id="new_meeting_schedule_form"></div>
     <div

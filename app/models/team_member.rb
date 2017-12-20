@@ -4,7 +4,7 @@ class TeamMember < ApplicationRecord
   belongs_to :user
   belongs_to :team
   belongs_to :organization
-  has_many :meeting_schedules
+  has_one :meeting_schedule
   has_many :meetings
 
   attribute :email, :string
@@ -14,6 +14,7 @@ class TeamMember < ApplicationRecord
   before_validation :set_user_id, if: :email?
 
   delegate :name, to: :user
+  delegate :upcoming_meeting, :next_meeting, to: :meeting_schedule
 
   def set_user_id
     existing_user = User.find_by(id: user_id)
