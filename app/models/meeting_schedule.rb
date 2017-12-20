@@ -25,6 +25,10 @@ class MeetingSchedule < ApplicationRecord
     previous_meeting.present? ? meetings.where("date < ?", previous_meeting.date) : Meeting.none
   end
 
+  def schedule
+    IceCube::Schedule.from_hash(recurring)
+  end
+
   private
 
   def set_recurrence_schedule
@@ -34,10 +38,6 @@ class MeetingSchedule < ApplicationRecord
       frequency: frequency,
       day_of_week: day_of_week
     ).create_schedule
-  end
-
-  def schedule
-    IceCube::Schedule.from_hash(recurring)
   end
 
   def set_first_meetings
