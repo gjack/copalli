@@ -16,6 +16,15 @@ class MeetingSchedule < ApplicationRecord
     meetings.find_by(date: meeting_date)
   end
 
+  def previous_meeting
+    meeting_date = schedule.previous_occurrence(Time.now.beginning_of_day - 1.day)
+    meetings.find_by(date: meeting_date)
+  end
+
+  def previous_meetings
+    previous_meeting.present? ? meetings.where("date < ?", previous_meeting.date) : Meeting.none
+  end
+
   private
 
   def set_recurrence_schedule
