@@ -8,7 +8,7 @@ class DateRescheduler
   def preview_single
     schedule = @meeting_schedule.schedule
     schedule.add_exception_time(@initial_date)
-    schedule.add_recurrence_time(@new_date)
+    schedule.add_recurrence_time(@new_date.in_time_zone("UTC"))
     schedule.next_occurrences(4, @new_date - 1.day)
   end
 
@@ -22,6 +22,21 @@ class DateRescheduler
     else
       new_schedule = calculate_new_schedule
       new_schedule.next_occurrences(4, @new_date - 1.day)
+    end
+  end
+
+  def update_single
+    schedule = @meeting_schedule.schedule
+    schedule.add_exception_time(@initial_date)
+    schedule.add_recurrence_time(@new_date.in_time_zone("UTC"))
+
+    rescheduled_meeting = @meeting_schedule.meetings.find_by(date: @initial_date)
+    if rescheduled_meeting.update_attributes({ date: @new_date })
+      @meeting_schedule.recurring = schedule.to_hash
+      @meeting_schedule.save!
+      true
+    else
+      false
     end
   end
 

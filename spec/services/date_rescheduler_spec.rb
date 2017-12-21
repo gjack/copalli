@@ -52,6 +52,30 @@ describe DateRescheduler do
     end
   end
 
+  describe "#update_single" do
+    let(:old_date3) { Time.local(2018, 1, 3).beginning_of_day }
+    let(:new_date3) { Time.local(2018, 1, 5).beginning_of_day }
+    let(:subject3) { DateRescheduler.new(meeting_schedule: meeting_schedule, initial_date: old_date3, new_date: new_date3) }
+
+    it "updates meeting with new date" do
+      original_meeting = meeting_schedule.meetings.find_by(date: old_date3)
+      subject3.update_single
+      expect(original_meeting.reload.date).to eq(new_date3)
+    end
+
+    it "keeps all other dates in schedule untouched" do
+      expected = [
+        Time.local(2017, 12, 20).beginning_of_day,
+        Time.local(2018, 1, 5).beginning_of_day,
+        Time.local(2018, 1, 17).beginning_of_day,
+        Time.local(2018, 1, 31).beginning_of_day,
+      ]
+
+      subject3.update_single
+      expect(meeting_schedule.reload.schedule.next_occurrences(4)).to match_array(expected)
+    end
+  end
+
   def create_meeting_schedule
     create(
       :meeting_schedule,
