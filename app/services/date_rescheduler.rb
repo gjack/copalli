@@ -7,37 +7,51 @@ class DateRescheduler
 
   def preview_single
     schedule = @meeting_schedule.schedule
-    schedule.add_exception_time(@initial_date)
-    schedule.add_recurrence_time(@new_date.in_time_zone("UTC"))
-    schedule.next_occurrences(4, @new_date - 1.day)
+    upcoming = @meeting_schedule.upcoming_meeting.date
+    if schedule.occurs_at?(upcoming) || @initial_date > upcoming
+      schedule.add_exception_time(@initial_date)
+      schedule.add_recurrence_time(@new_date.in_time_zone("UTC"))
+      schedule.next_occurrences(4, @new_date - 1.day)
+    else
+      schedule.next_occurrences(3, @new_date - 1.day).unshift(upcoming)
+    end
   end
 
   def preview_all_future
-    schedule = @meeting_schedule.schedule
-    upcoming = schedule.next_occurrence(Time.now.beginning_of_day - 1.day)
-    if @initial_date > upcoming
-      new_schedule = calculate_new_schedule
-      new_schedule.add_recurrence_time(upcoming)
-      new_schedule.next_occurrences(4, @new_date - 1.day)
-    else
-      new_schedule = calculate_new_schedule
-      new_schedule.next_occurrences(4, @new_date - 1.day)
-    end
+    new_schedule = calculate_new_schedule
+    new_schedule.next_occurrences(4, @new_date - 1.day)
   end
 
   def update_single
     schedule = @meeting_schedule.schedule
-    schedule.add_exception_time(@initial_date)
-    schedule.add_recurrence_time(@new_date.in_time_zone("UTC"))
+    upcoming = @meeting_schedule.upcoming_meeting.date
+    if schedule.occurs_at?(upcoming) || @initial_date > upcoming
+      schedule.add_exception_time(@initial_date)
+      schedule.add_recurrence_time(@new_date.in_time_zone("UTC"))
+    end
 
     rescheduled_meeting = @meeting_schedule.meetings.find_by(date: @initial_date)
-    if rescheduled_meeting.update_attributes({ date: @new_date })
-      @meeting_schedule.recurring = schedule.to_hash
-      @meeting_schedule.save!
-      true
+    rescheduled_meeting.update_attributes({ date: @new_date })
+    @meeting_schedule.recurring = schedule.to_hash
+    @meeting_schedule.save!
+  end
+
+  def update_all_future
+    schedule = @meeting_schedule.schedule
+    upcoming = @meeting_schedule.upcoming_meeting.date
+    new_schedule = calculate_new_schedule
+    if @initial_date > upcoming
+      rescheduled_meeting = @meeting_schedule.meetings.find_by(date: @initial_date)
+      rescheduled_meeting.update_attributes({ date: @new_date })
     else
-      false
+      rescheduled_meetings = @meeting_schedule.meetings.where("date >= ?",  @initial_date)
+      new_dates = new_schedule.next_occurrences(2, @new_date - 1.day)
+      rescheduled_meetings.each.with_index do |meeting, index|
+        meeting.update_attributes(date: new_dates[index])
+      end
     end
+    @meeting_schedule.recurring = new_schedule.to_hash
+    @meeting_schedule.save!
   end
 
   private

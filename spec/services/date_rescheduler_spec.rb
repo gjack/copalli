@@ -76,6 +76,69 @@ describe DateRescheduler do
     end
   end
 
+  describe "#update_all_future" do
+    before do
+      Timecop.freeze(Time.local(2017, 12, 18))
+    end
+
+    context "when updating all after some date after upcoming" do
+      let(:old_date4) { Time.local(2018, 1, 3).beginning_of_day }
+      let(:new_date4) { Time.local(2018, 1, 5).beginning_of_day }
+      let(:subject4) { DateRescheduler.new(meeting_schedule: meeting_schedule, initial_date: old_date4, new_date: new_date4) }
+
+      it "updates meeting with future date" do
+        original_meeting = meeting_schedule.meetings.find_by(date: old_date4)
+        subject4.update_all_future
+        expect(original_meeting.reload.date).to eq(new_date4)
+      end
+
+      it "updates all future dates in the schedule" do
+        expected = [
+          Time.local(2018, 1, 5).beginning_of_day,
+          Time.local(2018, 1, 19).beginning_of_day,
+          Time.local(2018, 2, 2).beginning_of_day,
+          Time.local(2018, 2, 16).beginning_of_day,
+        ]
+        subject4.update_all_future
+        expect(meeting_schedule.reload.schedule.next_occurrences(4)).to match_array(expected)
+      end
+
+      it "leaves upcoming meeting with the same date" do
+        subject4.update_all_future
+        expect(meeting_schedule.reload.upcoming_meeting.date).to eq(start_date)
+      end
+    end
+
+    context "when updating all dates including upcoming" do
+      let(:old_date5) { Time.local(2017, 12, 20).beginning_of_day }
+      let(:new_date5) { Time.local(2017, 12, 25).beginning_of_day }
+      let(:subject5) { DateRescheduler.new(meeting_schedule: meeting_schedule, initial_date: old_date5, new_date: new_date5) }
+
+      it "updates meeting with future date" do
+        original_meeting = meeting_schedule.meetings.find_by(date: old_date5)
+        subject5.update_all_future
+        expect(original_meeting.reload.date).to eq(new_date5)
+      end
+
+      it "updates all future dates in the schedule" do
+        expected = [
+          Time.local(2017, 12, 25).beginning_of_day,
+          Time.local(2018, 1, 8).beginning_of_day,
+          Time.local(2018, 1, 22).beginning_of_day,
+          Time.local(2018, 2, 5).beginning_of_day,
+        ]
+        subject5.update_all_future
+        expect(meeting_schedule.reload.schedule.next_occurrences(4)).to match_array(expected)
+      end
+
+      it "updates dates for upcoming and next meeting" do
+        subject5.update_all_future
+        expect(meeting_schedule.reload.upcoming_meeting.date).to eq(new_date5)
+        expect(meeting_schedule.reload.next_meeting.date).to eq(Time.local(2018, 1, 8).beginning_of_day)
+      end
+    end
+  end
+
   def create_meeting_schedule
     create(
       :meeting_schedule,

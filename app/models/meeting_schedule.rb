@@ -7,22 +7,25 @@ class MeetingSchedule < ApplicationRecord
   after_create :set_first_meetings
 
   def upcoming_meeting
+    upcoming = meetings.where("date > ?", Time.now.beginning_of_day - 1.day).first
+    return upcoming if upcoming.present?
     meeting_date = schedule.next_occurrence(Time.now.beginning_of_day - 1.day)
     meeting_for_date(meeting_date)
   end
 
   def next_meeting
-    meeting_date = schedule.next_occurrence
+    next_meet = meetings.where("date > ?", upcoming_meeting.date).first
+    return next_meet if next_meet.present?
+    meeting_date = schedule.next_occurrence(upcoming_meeting.date)
     meeting_for_date(meeting_date)
   end
 
   def previous_meeting
-    meeting_date = schedule.previous_occurrence(Time.now.beginning_of_day - 1.day)
-    meetings.find_by(date: meeting_date)
+    previous_meetings.last
   end
 
   def previous_meetings
-    previous_meeting.present? ? meetings.where("date < ?", previous_meeting.date) : Meeting.none
+    meetings.where("date < ?", Time.now.beginning_of_day - 1.day)
   end
 
   def schedule
