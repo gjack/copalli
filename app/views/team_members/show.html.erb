@@ -9,6 +9,26 @@
         </div>
       </div>
     </div>
+    <% if @team_member.previous_meeting.present? %>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-subtitle">
+            <span>Previous on-on-one  on  <%= @team_member.previous_meeting.date_string %></span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <% if @team_member.past_meetings.any? %>
+      <%= @team_member.past_meetings.each do |past_meeting| %>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-subtitle">
+              <span><%= past_meeting.date_string %></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
   <% else %>
     <h3>Scheduling</h3>
     <div id="new_meeting_schedule_form"></div>

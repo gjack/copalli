@@ -7,14 +7,14 @@ class MeetingSchedule < ApplicationRecord
   after_create :set_first_meetings
 
   def upcoming_meeting
-    upcoming = meetings.where("date > ?", Time.now.beginning_of_day - 1.day).first
+    upcoming = meetings.scheduled_meetings.where("date > ?", Time.now.beginning_of_day - 1.day).first
     return upcoming if upcoming.present?
     meeting_date = schedule.next_occurrence(Time.now.beginning_of_day - 1.day)
     meeting_for_date(meeting_date)
   end
 
   def next_meeting
-    next_meet = meetings.where("date > ?", upcoming_meeting.date).first
+    next_meet = meetings.scheduled_meetings.where("date > ?", upcoming_meeting.date).first
     return next_meet if next_meet.present?
     meeting_date = schedule.next_occurrence(upcoming_meeting.date)
     meeting_for_date(meeting_date)
@@ -25,7 +25,12 @@ class MeetingSchedule < ApplicationRecord
   end
 
   def previous_meetings
-    meetings.where("date < ?", Time.now.beginning_of_day - 1.day)
+    meetings.scheduled_meetings.where("date < ?", Time.now.beginning_of_day - 1.day)
+  end
+
+  def past_meetings
+    past = meetings.where("date < ?", Time.now.beginning_of_day - 1.day)
+    previous_meeting.present? ? past.where.not(id: previous_meeting.id) : past
   end
 
   def schedule
@@ -50,15 +55,17 @@ class MeetingSchedule < ApplicationRecord
         date: date,
         meeting_schedule_id: self.id,
         organization_id: team_member.organization_id,
+        scheduled: true
         })
     end
   end
 
   def meeting_for_date(meeting_date)
-    meeting = meetings.find_or_initialize_by(date: meeting_date)
+    meeting = meetings.scheduled_meetings.find_or_initialize_by(date: meeting_date)
     if meeting.new_record?
       meeting.team_member_id = team_member_id
       meeting.organization_id = team_member.organization.id
+      meeting.scheduled = true
       meeting.save
     end
     meeting

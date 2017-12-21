@@ -14,7 +14,8 @@ class TeamMember < ApplicationRecord
   before_validation :set_user_id, if: :email?
 
   delegate :name, to: :user
-  delegate :upcoming_meeting, :next_meeting, to: :meeting_schedule
+  delegate :upcoming_meeting, :next_meeting, :previous_meeting,
+           :previous_meetings, :past_meetings, to: :meeting_schedule
 
   def set_user_id
     existing_user = User.find_by(id: user_id)
