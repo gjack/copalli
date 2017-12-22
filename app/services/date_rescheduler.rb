@@ -17,9 +17,17 @@ class DateRescheduler
     end
   end
 
+  def preview_single_formatted
+    as_formatted_dates(preview_single)
+  end
+
   def preview_all_future
     new_schedule = calculate_new_schedule
     new_schedule.next_occurrences(4, @new_date - 1.day)
+  end
+
+  def preview_all_future_formatted
+    as_formatted_dates(preview_all_future)
   end
 
   def update_single
@@ -55,6 +63,10 @@ class DateRescheduler
   end
 
   private
+
+  def as_formatted_dates(dates)
+    dates.map { |date| date.strftime("%-m/%d/%Y")}
+  end
 
   def calculate_new_schedule
     new_schedule_hash = ScheduleCreator.new(
